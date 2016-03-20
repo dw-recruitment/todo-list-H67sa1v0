@@ -17,7 +17,8 @@
                       [wrap-route-aliases :aliases]]
          :not-found  (io/resource "todo/errors/404.html")
          :defaults   (meta-merge site-defaults {:static {:resources "todo/public"}})
-         :aliases    {"/" "/index.html"}}})
+         :aliases    {"/" "/index.html"
+                      "/about" "/about.html"}}})
 
 (defn new-system [config]
   (let [config (meta-merge base-config config)]

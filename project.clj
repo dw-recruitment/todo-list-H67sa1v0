@@ -41,5 +41,6 @@
                                   [kerodon "0.7.0"]]
                    :source-paths ["dev"]
                    :repl-options {:init-ns user}
-                   :env {:port "3000"}}
+                   :env {:port "3000"
+                         :transactor-uri "datomic:mem://todododo"}}
    :project/test  {}})

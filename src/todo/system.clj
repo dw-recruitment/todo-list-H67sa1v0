@@ -8,7 +8,8 @@
             [meta-merge.core :refer [meta-merge]]
             [ring.component.jetty :refer [jetty-server]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.middleware.webjars :refer [wrap-webjars]]))
+            [ring.middleware.webjars :refer [wrap-webjars]]
+            [todo.component.datomic :refer [datomic]]))
 
 (def base-config
   {:app {:middleware [[wrap-not-found :not-found]
@@ -24,7 +25,8 @@
   (let [config (meta-merge base-config config)]
     (-> (component/system-map
          :app  (handler-component (:app config))
-         :http (jetty-server (:http config)))
+         :http (jetty-server (:http config))
+         :db (datomic (:db config)))
         (component/system-using
          {:http [:app]
           :app  []}))))

@@ -13,7 +13,13 @@
                  [ring-jetty-component "0.3.1"]
                  [ring-webjars "0.1.1"]
                  [org.slf4j/slf4j-nop "1.7.14"]
-                 [org.webjars/normalize.css "3.0.2"]]
+                 [org.webjars/normalize.css "3.0.2"]
+                 [com.datomic/datomic-pro "0.9.5350"]
+                 [org.postgresql/postgresql "9.4.1208"]
+                 [com.taoensso/timbre "4.3.1"]
+                 [potemkin "0.4.3"]]
+  :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
+                                   :creds :gpg}}
   :plugins [[lein-environ "1.0.2"]
             [lein-gen "0.2.2"]]
   :generators [[duct/generators "0.5.10"]]

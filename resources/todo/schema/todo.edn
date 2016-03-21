@@ -1,0 +1,31 @@
+{:todododo/todo-partition
+ {:txes [[{:db/id #db/id[:db.part/db]
+           :db/ident :todos
+           :db/doc "Where we keep our todos"
+           :db.install/_partition :db.part/db}]]}
+
+ :todododo/todo-basic-attributes
+ {:requires [:todododo/todo-partition]
+  :txes [[{:db/id #db/id[:db.part/db]
+           :db/ident :todo-item/text
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one
+           :db/doc "What we want to do"
+           :db.install/_attribute :db.part/db}
+          {:db/id #db/id[:db.part/db]
+           :db/ident :todo-item/status
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one
+           :db/doc "Whether we've done it yet"
+           :db.install/_attribute :db.part/db}
+          {:db/id #db/id[:db.part/db]
+           :db/ident :todo-item/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/uuid
+           :db/cardinality :db.cardinality/one
+           :db/doc "For finding our todos"
+           :db.install/_attribute :db.part/db}
+          {:db/id #db/id[:todos]
+           :db/ident :status/todo}
+          {:db/id #db/id[:todos]
+           :db/ident :status/done}]]}}

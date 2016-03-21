@@ -9,7 +9,8 @@
             [ring.component.jetty :refer [jetty-server]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.webjars :refer [wrap-webjars]]
-            [todo.component.datomic :refer [datomic]]))
+            [todo.component.datomic :refer [datomic]]
+            [todo.endpoint.todos :refer [todos-endpoint]]))
 
 (def base-config
   {:app {:middleware [[wrap-not-found :not-found]
@@ -18,15 +19,16 @@
                       [wrap-route-aliases :aliases]]
          :not-found  (io/resource "todo/errors/404.html")
          :defaults   (meta-merge site-defaults {:static {:resources "todo/public"}})
-         :aliases    {"/" "/index.html"
-                      "/about" "/about.html"}}})
+         :aliases    {"/about" "/about.html"}}})
 
 (defn new-system [config]
   (let [config (meta-merge base-config config)]
     (-> (component/system-map
          :app  (handler-component (:app config))
          :http (jetty-server (:http config))
-         :db (datomic (:db config)))
+         :db (datomic (:db config))
+         :todos (endpoint-component todos-endpoint))
         (component/system-using
          {:http [:app]
-          :app  []}))))
+          :todos [:db]
+          :app  [:todos]}))))

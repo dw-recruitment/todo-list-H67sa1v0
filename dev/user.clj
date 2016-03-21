@@ -9,7 +9,9 @@
             [reloaded.repl :refer [system init start stop go reset]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [todo.config :as config]
-            [todo.system :as system]))
+            [todo.system :as system]
+            [datomic.api :as d]
+            seed))
 
 (def dev-config
   {:app {:middleware [wrap-stacktrace]}})
@@ -27,6 +29,9 @@
 
 (defn test []
   (eftest/run-tests (eftest/find-tests "test") {:multithread? false}))
+
+(defn install-seed-data []
+  (seed/install-seed-data (-> system :db :conn)))
 
 (when (io/resource "local.clj")
   (load "local"))

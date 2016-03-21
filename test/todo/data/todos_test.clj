@@ -3,20 +3,11 @@
             [todo.component.datomic :as datomic]
             [clojure.test :refer :all]
             [datomic.api :as d]
-            [com.stuartsierra.component :as component])
+            [com.stuartsierra.component :as component]
+            [todo.test-utils :as utils :refer [conn]])
   (:import java.util.UUID))
 
-(def test-config {:transactor-uri "datomic:mem://todododo-test"})
-
-(def ^:dynamic conn nil)
-
-(use-fixtures :each
-  (fn [test]
-    (let [datomic-component (-> (datomic/datomic test-config)
-                                (component/start))]
-      (binding [conn (:conn datomic-component)]
-        (test)
-        (d/delete-database (:transactor-uri test-config))))))
+(use-fixtures :each utils/wrap-manage-datomic)
 
 (deftest create-todo-works
   (testing "and returns an ID"

@@ -44,4 +44,5 @@
                    :repl-options {:init-ns user}
                    :env {:port "3000"
                          :transactor-uri "datomic:mem://todododo"}}
-   :project/test  {}})
+   :project/test  {:env {:transactor-uri "datomic:mem://todododo"}
+                   :dependencies [[ring/ring-mock "0.3.0"]]}})

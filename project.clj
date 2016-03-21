@@ -18,7 +18,8 @@
                  [org.postgresql/postgresql "9.4.1208"]
                  [com.taoensso/timbre "4.3.1"]
                  [potemkin "0.4.3"]
-                 [io.rkn/conformity "0.4.0"]]
+                 [io.rkn/conformity "0.4.0"]
+                 [metosin/ring-http-response "0.6.5"]]
   :repositories {"my.datomic.com" {:url "https://my.datomic.com/repo"
                                    :creds :gpg}}
   :plugins [[lein-environ "1.0.2"]

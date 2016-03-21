@@ -23,7 +23,9 @@
 (defn find-by-id
   "Find a todo with a specified ID"
   [conn uuid]
-  (when-let [entity-id (d/q '[:find ?t . :where [?t :todo-item/uuid ?uuid]] (d/db conn) uuid)]
+  (when-let [entity-id (d/q '[:find ?t . :in $ ?u :where [?t :todo-item/uuid ?u]]
+                            (d/db conn)
+                            uuid)]
     (d/entity (d/db conn) entity-id)))
 
 (defn index

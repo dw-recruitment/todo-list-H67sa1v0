@@ -1,11 +1,20 @@
 (ns todo.endpoint.views.todos
   (:require [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
+(defn done? [entity]
+  (= :status/done (:todo-item/status entity)))
+
 (defn update-status [entity]
-  (if (= :status/done (:todo-item/status entity)) "todo" "done"))
+  (if (done? entity) "todo" "done"))
 
 (defn button-label [entity]
-  (if (= :status/done (:todo-item/status entity)) "Undo" "Mark Done"))
+  (if (done? entity) "Undo" "Mark Done"))
+
+(defn wrap-strikethrough [entity]
+  (let [text (:todo-item/text entity)]
+    (if (done? entity)
+      [:strike text]
+      text)))
 
 (defn todo-table
   "List the todos"
@@ -26,7 +35,7 @@
                  :value (update-status e)}]
         (anti-forgery-field)
         [:tr
-         [:td (:todo-item/text e)]
+         [:td (wrap-strikethrough e)]
          [:td (name (:todo-item/status e))]
          [:td
           [:button {:type "submit"

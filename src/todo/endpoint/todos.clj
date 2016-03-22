@@ -29,6 +29,13 @@
     (catch Throwable t
       (internal-server-error! (.getMessage t)))))
 
+(defn delete-todo [conn uuid]
+  (try
+    (todos-data/delete-by-id conn uuid)
+    (see-other "/")
+    (catch Throwable t
+      (internal-server-error! (.getMessage t)))))
+
 (defn todos-endpoint [config]
   (let [conn (-> config :db :conn)]
     (routes
@@ -38,5 +45,7 @@
      (POST "/" [todo-text]
        (add-todo conn todo-text))
 
-     (POST "/:uuid" [uuid :<< as-uuid todo-status]
-       (update-todo conn uuid todo-status)))))
+     (POST "/:uuid" [uuid :<< as-uuid todo-status delete]
+       (if delete
+         (delete-todo conn uuid)
+         (update-todo conn uuid todo-status))))))

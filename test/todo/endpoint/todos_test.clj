@@ -10,6 +10,10 @@
 (use-fixtures :each
   utils/wrap-manage-datomic)
 
+(defn handler [conn]
+  (wrap-defaults (todos/todos-endpoint {:db {:conn conn}})
+                 (assoc site-defaults :security false)))
+
 (defn test-data []
   (let [todos [["Todo number 1" :status/done]
                ["Todo number 2" :status/todo]
@@ -18,12 +22,12 @@
       (data/create conn text status))))
 
 (deftest root-route-works-for-get
-  (let [handler (todos/todos-endpoint {:db {:conn conn}})]
+  (let [handler (handler conn)]
     (testing "empty table"
       (let [resp (handler (mock/request :get "/"))]
         (is (ok? resp))
         (is (re-find #"<th>Todo</th>" (:body resp)))
-        (is (re-find #"<th>Status</th>" (:body resp)))))
+        (is (re-find #"<th.*>Status</th>" (:body resp)))))
     (testing "with some data"
       (test-data)
       (let [resp (handler (mock/request :get "/"))]
@@ -33,8 +37,7 @@
         (is (re-find #"Todo number 3" (:body resp)))))))
 
 (deftest root-route-works-for-post
-  (let [handler (wrap-defaults (todos/todos-endpoint {:db {:conn conn}})
-                               (assoc site-defaults :security false))]
+  (let [handler (handler conn)]
     (testing "the happy path"
       (let [resp (handler (-> (mock/request :post "/")
                               (mock/body {"todo-text" "A new todo"})))]
@@ -42,3 +45,15 @@
         (let [resp (handler (mock/request :get (get-in resp [:headers "Location"])))]
           (is (ok? resp))
           (is (re-find #"A new todo" (:body resp))))))))
+
+(deftest update-todo-endpoint-works
+  (let [handler (handler conn)]
+    (testing "the happy path"
+      (let [uuid (data/create conn "This is a great todo")
+            resp (handler (-> (mock/request :post (str "/" uuid))
+                              (mock/body {"todo-status" "done"})))]
+        (is (see-other? resp))
+        (let [resp (handler (mock/request :get (get-in resp [:headers "Location"])))]
+          (is (ok? resp))
+          (is (re-find #"is a great todo" (:body resp)))
+          (is (re-find #"<td>done</td>" (:body resp))))))))

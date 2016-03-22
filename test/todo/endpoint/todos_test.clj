@@ -56,4 +56,15 @@
         (let [resp (handler (mock/request :get (get-in resp [:headers "Location"])))]
           (is (ok? resp))
           (is (re-find #"is a great todo" (:body resp)))
-          (is (re-find #"<td>done</td>" (:body resp))))))))
+          (is (re-find #"check\.png" (:body resp))))))))
+
+(deftest delete-todo-endpoint-works
+  (let [handler (handler conn)]
+    (testing "the happy path"
+      (let [uuid (data/create conn "This is a great todo")
+            resp (handler (-> (mock/request :post (str "/" uuid))
+                              (mock/body {"delete" "true"})))]
+        (is (see-other? resp))
+        (let [resp (handler (mock/request :get (get-in resp [:headers "Location"])))]
+          (is (ok? resp))
+          (is (not (re-find #"is a great todo" (:body resp)))))))))

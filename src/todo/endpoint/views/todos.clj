@@ -10,7 +10,10 @@
 (defn button-label [entity]
   (if (done? entity) "Undo" "Mark Done"))
 
-(defn wrap-strikethrough [entity]
+(defn status [entity]
+  (when (done? entity) [:img {:src "/images/check.png"}]))
+
+(defn maybe-wrap-strikethrough [entity]
   (let [text (:todo-item/text entity)]
     (if (done? entity)
       [:strike text]
@@ -19,13 +22,13 @@
 (defn todo-table
   "List the todos"
   [entities]
-  [:div
+  [:div {:class "container two-thirds column"}
    [:table {:class "u-full-width"}
     [:thead
      [:tr
       [:th "Todo"]
-      [:th {:colspan "2"}
-       "Status"]]]
+      [:th "Status"]
+      [:th "Actions"]]]
     [:tbody
      (for [e entities]
        [:form {:method "POST" :action (str "/" (:todo-item/uuid e))}
@@ -35,12 +38,17 @@
                  :value (update-status e)}]
         (anti-forgery-field)
         [:tr
-         [:td (wrap-strikethrough e)]
-         [:td (name (:todo-item/status e))]
+         [:td (maybe-wrap-strikethrough e)]
+         [:td (status e)]
          [:td
           [:button {:type "submit"
+                    :class "input one-half column"}
+           (button-label e)]
+          [:button {:type "submit"
+                    :name "delete"
+                    :value "true"
                     :class "input one-half column u-pull-right"}
-           (button-label e)]]]])]]
+           "Delete"]]]])]]
    [:form {:method "POST"}
     [:label {:for "todo-text"}
      "Enter new Todo item:"]

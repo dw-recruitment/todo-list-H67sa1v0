@@ -4,27 +4,24 @@
 
 (defn wrap-layout
   "Wrap the layout around a page"
-  [content]
+  [nav content]
   (html
    [:html
     [:head
      [:meta {:charset "utf-8"}]
-     [:title "TODO DO DO"]
+     [:meta {:http-equiv "X-UA-Compatible"
+             :content "IE=edge"}]
+     [:meta {:name "viewport"
+             :content "width=device-width, initial-scale=1"}]
      [:meta {:name "description"
              :content "A zoomy web app for doing the tracking of doing todos."}]
-     [:meta {:name "author" :content "Anonymous Candidate"}]
-
-     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-
-     [:link {:href "//fonts.googleapis.com/css?family=Raleway:400,300,600"
-             :rel "stylesheet"
-             :type "text/css"}]
-
-     [:link {:rel "stylesheet" :href "css/normalize.css"}]
-     [:link {:rel "stylesheet" :href "css/skeleton.css"}]
-
-     [:link {:rel "icon" :type "image/png" :href "images/favicon.png"}]]
-
+     [:meta {:name "author"
+             :content "Anonymous Candidate"}]
+     [:title "TODO DO DO"]
+     [:link {:rel "stylesheet" :href "/css/bootstrap.min.css"}]]
     [:body
      [:div {:class "container"}
-      content]]]))
+      nav
+      content]
+     [:script {:src "/js/jquery-1.12.2.min.js"}]
+     [:script {:src "/js/bootstrap.min.js"}]]]))

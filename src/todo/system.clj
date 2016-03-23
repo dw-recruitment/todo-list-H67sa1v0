@@ -10,7 +10,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [todo.component.datomic :refer [datomic]]
-            [todo.endpoint.todos :refer [todos-endpoint]]))
+            [todo.endpoint.todo-lists :refer [todo-lists-endpoint]]))
 
 (def base-config
   {:app {:middleware [[wrap-not-found :not-found]
@@ -27,7 +27,7 @@
          :app  (handler-component (:app config))
          :http (jetty-server (:http config))
          :db (datomic (:db config))
-         :todos (endpoint-component todos-endpoint))
+         :todos (endpoint-component todo-lists-endpoint))
         (component/system-using
          {:http [:app]
           :todos [:db]

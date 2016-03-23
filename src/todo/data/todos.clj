@@ -5,20 +5,23 @@
 
 (defn create
   "Make a new todo item."
-  ([conn text]
-   (create conn text :status/todo))
-  ([conn text status]
+  ([conn t-list text]
+   (create conn t-list text :status/todo))
+  ([conn t-list text status]
    {:pre [(contains? #{:status/todo :status/done} status)]}
    (try
      (let [squuid (d/squuid)]
        (deref (d/transact conn
-                          `[{:db/id #db/id[:todos]
+                          `[{:db/id #db/id[:todos -100]
                              :todo-item/uuid ~squuid
                              :todo-item/text ~text
-                             :todo-item/status ~status}]))
+                             :todo-item/status ~status}
+                            {:db/id ~(:db/id t-list)
+                             :todo-list/todo-items #db/id[:todos -100]}]))
        squuid)
      (catch java.util.concurrent.ExecutionException e
-       (error e "Couldn't create todo")))))
+       (error e "Couldn't create todo")
+       (throw e)))))
 
 (defn find-by-id
   "Find a todo with a specified ID"
@@ -30,8 +33,14 @@
 
 (defn index
   "List all the todos"
-  [conn]
-  (let [results (d/q '[:find [?t ...] :where [?t :todo-item/uuid]] (d/db conn))]
+  [conn list-uuid]
+  (let [results (d/q '[:find [?t ...]
+                       :in $ ?u
+                       :where
+                       [?l :todo-list/uuid ?u]
+                       [?l :todo-list/todo-items ?t]]
+                     (d/db conn)
+                     list-uuid)]
     (->> results
          (map (partial d/entity (d/db conn)))
          (sort-by :todo-item/uuid))))

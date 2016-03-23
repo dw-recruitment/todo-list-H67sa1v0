@@ -28,4 +28,26 @@
           {:db/id #db/id[:todos]
            :db/ident :status/todo}
           {:db/id #db/id[:todos]
-           :db/ident :status/done}]]}}
+           :db/ident :status/done}]]}
+
+ :todododo/todo-lists
+ {:requires [:todododo/todo-partition :todododo/todo-basic-attributes]
+  :txes [[{:db/id #db/id[:db.part/db]
+           :db/ident :todo-list/title
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one
+           :db/doc "This todo list's name"
+           :db.install/_attribute :db.part/db}
+          {:db/id #db/id[:db.part/db]
+           :db/ident :todo-list/uuid
+           :db/valueType :db.type/uuid
+           :db/cardinality :db.cardinality/one
+           :db/doc "Unique identifier for this todo list"
+           :db.install/_attribute :db.part/db}
+          {:db/id #db/id[:db.part/db]
+           :db/ident :todo-list/todo-items
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many
+           :db/isComponent true
+           :db/doc "This todo list's todos"
+           :db.install/_attribute :db.part/db}]]}}

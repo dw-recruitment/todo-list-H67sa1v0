@@ -5,25 +5,23 @@
             [todo.data.todos :as todos-data]
             [todo.endpoint.views.layout :as layout]
             [todo.endpoint.views.todos :as todos-views]
+            [todo.endpoint.utils :as utils]
             [ring.util.http-response :refer [see-other
                                              ok
                                              content-type
                                              internal-server-error!]]))
 
-(defn todo-list-path [todo-list]
-  (str "/lists/" (:todo-list/uuid todo-list)))
-
 (defn redirect-to-list
   [conn list-uuid]
   (->> list-uuid
        (todo-lists-data/find-by-id conn)
-       (todo-list-path)
+       (utils/todo-list-path)
        (see-other)))
 
 (defn redirect-to-default-list
   [conn]
   (let [default-list (first (todo-lists-data/index conn))]
-    (see-other (todo-list-path default-list))))
+    (see-other (utils/todo-list-path default-list))))
 
 (defn render-todos
   [conn list-uuid]

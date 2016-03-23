@@ -1,5 +1,6 @@
 (ns todo.endpoint.views.todos
-  (:require [ring.util.anti-forgery :refer [anti-forgery-field]]))
+  (:require [ring.util.anti-forgery :refer [anti-forgery-field]]
+            [todo.endpoint.utils :as utils]))
 
 (defn done? [entity]
   (= :status/done (:todo-item/status entity)))
@@ -18,9 +19,6 @@
     (if (done? entity)
       [:strike text]
       text)))
-
-(defn todo-path [t-list todo]
-  (str "/lists/" (:todo-list/uuid t-list) "/" (:todo-item/uuid todo)))
 
 (defn new-todo-form
   []
@@ -54,7 +52,7 @@
       [:ul {:class "dropdown-menu"}
        (for [list lists]
          [:li
-          [:a {:href "#"}
+          [:a {:href (utils/todo-list-path list)}
            (:todo-list/title list)]])]]]]])
 
 (defn todo-table
@@ -62,7 +60,7 @@
   [t-list entities]
   [:div {:class "row"}
    [:div {:class "col-md-8"}
-    [:h2 (:todo-list/title t-list)]
+    [:h3 (:todo-list/title t-list)]
     [:table {:class "table-striped table"}
      [:thead
       [:tr
@@ -71,7 +69,7 @@
        [:th "Actions"]]]
      [:tbody
       (for [e entities]
-        [:form {:method "POST" :action (todo-path t-list e)}
+        [:form {:method "POST" :action (utils/todo-path t-list e)}
          [:input {:type "hidden"
                   :name "todo-status"
                   :id "todo-status"

@@ -1,7 +1,7 @@
 (ns todo.endpoint.todo-lists-test
   (:require [clojure.test :refer :all]
             [todo.endpoint.todo-lists :as todo-lists]
-            [todo.endpoint.views.todos :refer [todo-path]]
+            [todo.endpoint.utils :refer [todo-path todo-list-path]]
             [todo.test-utils :as utils :refer [conn]]
             [todo.data.todos :as todos-data]
             [todo.data.todo-lists :as todo-lists-data]
@@ -51,7 +51,7 @@
     (test-data conn)
     (testing "the happy path"
       (let [t-list (first (todo-lists-data/index conn))
-            resp (handler (-> (mock/request :post (todo-lists/todo-list-path t-list))
+            resp (handler (-> (mock/request :post (todo-list-path t-list))
                               (mock/body {"todo-text" "A new todo"})))]
         (is (see-other? resp))
         (let [resp (handler (mock/request :get (get-in resp [:headers "Location"])))]

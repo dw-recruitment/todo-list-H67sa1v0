@@ -3,6 +3,14 @@
             [todo.logging :refer [error errorf]])
   (:import java.util.concurrent.ExecutionException))
 
+(defn done?
+  "Is this todo done?"
+  [todo]
+  (= :status/done (:todo-item/status todo)))
+
+(defn text [todo]
+  (:todo-item/text todo))
+
 (defn create
   "Make a new todo item."
   ([conn t-list text]

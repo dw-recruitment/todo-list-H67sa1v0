@@ -3,6 +3,9 @@
             [todo.logging :refer [error]])
   (:import java.util.concurrent.ExecutionException))
 
+(defn title [t-list]
+  (:todo-list/title t-list))
+
 (defn index
   "List all the todo lists"
   [conn]

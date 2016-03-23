@@ -1,27 +1,26 @@
 (ns todo.endpoint.views.todos
   (:require [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [todo.endpoint.utils :as utils]))
-
-(defn done? [entity]
-  (= :status/done (:todo-item/status entity)))
+            [todo.endpoint.utils :as utils]
+            [todo.data.todos :as todos]
+            [todo.data.todo-lists :as todo-lists]
+            [todo.endpoint.views.common :as common]))
 
 (defn update-status [entity]
-  (if (done? entity) "todo" "done"))
+  (if (todos/done? entity) "todo" "done"))
 
 (defn button-label [entity]
-  (if (done? entity) "Undo" "Mark Done"))
+  (if (todos/done? entity) "Undo" "Mark Done"))
 
 (defn status [entity]
-  (when (done? entity) [:span {:class "glyphicon glyphicon-ok"}]))
+  (when (todos/done? entity) [:span {:class "glyphicon glyphicon-ok"}]))
 
 (defn maybe-wrap-strikethrough [entity]
-  (let [text (:todo-item/text entity)]
-    (if (done? entity)
+  (let [text (todos/text entity)]
+    (if (todos/done? entity)
       [:strike text]
       text)))
 
-(defn new-todo-form
-  []
+(defn new-todo-form []
   [:form {:method "POST"}
    [:div {:class "form-group"}
     [:input {:type "text"
@@ -31,36 +30,12 @@
              :placeholder "Enter new todo item"}]]
    (anti-forgery-field)])
 
-(defn nav
-  [lists]
-  [:nav {:class "navbar navbar-default col-md-8"}
-   [:div {:class "container-fluid"}
-    [:div {:class "navbar-header"}
-     [:a {:class "navbar-brand"
-          :href "#"}
-      "TODO DO DO"]]
-    [:ul {:class "nav navbar-nav navbar-right"}
-     [:li {:class "dropdown"}
-      [:a {:href "#"
-           :class "dropdown-toggle"
-           :data-toggle "dropdown"
-           :role "button"
-           :aria-haspopup "true"
-           :aria-expanded "false"}
-       "Lists"
-       [:span {:class "caret"}]]
-      [:ul {:class "dropdown-menu"}
-       (for [list lists]
-         [:li
-          [:a {:href (utils/todo-list-path list)}
-           (:todo-list/title list)]])]]]]])
-
 (defn todo-table
   "List the todos"
   [t-list entities]
   [:div {:class "row"}
    [:div {:class "col-md-8"}
-    [:h3 (:todo-list/title t-list)]
+    [:h3 (todo-lists/title t-list)]
     [:table {:class "table-striped table"}
      [:thead
       [:tr

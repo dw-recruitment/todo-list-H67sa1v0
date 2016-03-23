@@ -5,6 +5,7 @@
             [todo.data.todos :as todos-data]
             [todo.endpoint.views.layout :as layout]
             [todo.endpoint.views.todos :as todos-views]
+            [todo.endpoint.views.common :as common]
             [todo.endpoint.utils :as utils]
             [ring.util.http-response :refer [see-other
                                              ok
@@ -27,7 +28,7 @@
   [conn list-uuid]
   (let [table (todos-views/todo-table (todo-lists-data/find-by-id conn list-uuid)
                                       (todos-data/index conn list-uuid))
-        nav (todos-views/nav (todo-lists-data/index conn))]
+        nav (common/nav (todo-lists-data/index conn))]
     (-> (layout/wrap-layout nav table)
         (ok)
         (content-type "text/html"))))

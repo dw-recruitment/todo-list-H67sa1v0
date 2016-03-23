@@ -20,8 +20,9 @@
       [:strike text]
       text)))
 
-(defn new-todo-form []
-  [:form {:method "POST"}
+(defn new-todo-form [t-list]
+  [:form {:method "POST"
+          :action (utils/create-todo-path t-list)}
    [:div {:class "form-group"}
     [:input {:type "text"
              :class "form-control"
@@ -62,4 +63,4 @@
                      :value "true"
                      :class "btn btn-danger pull-right col-md-5"}
             "Delete"]]]])]]
-    (new-todo-form)]])
+    (new-todo-form t-list)]])

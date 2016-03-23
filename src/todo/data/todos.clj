@@ -11,6 +11,9 @@
 (defn text [todo]
   (:todo-item/text todo))
 
+(defn uuid [todo]
+  (:todo-item/uuid todo))
+
 (defn create
   "Make a new todo item."
   ([conn t-list text]
@@ -56,22 +59,24 @@
 (defn update-by-id
   "Update a todo"
   [conn uuid m]
-  (when-let [entity (find-by-id conn uuid)]
-    (try
+  (try
+    (when-let [entity (find-by-id conn uuid)]
       (let [new-entity (merge (select-keys entity (keys entity))
                               m
                               {:db/id (:db/id entity)})]
         (deref (d/transact conn [new-entity]))
-        uuid)
-      (catch java.util.concurrent.ExecutionException e
-        (errorf e "Couldn't update todo: %s" uuid)))))
+        uuid))
+    (catch java.util.concurrent.ExecutionException e
+      (errorf e "Couldn't update todo: %s" uuid)
+      (throw e))))
 
 (defn delete-by-id
   "Delete a todo"
   [conn uuid]
-  (when-let [entity (find-by-id conn uuid)]
-    (try
+  (try
+    (when-let [entity (find-by-id conn uuid)]
       (deref (d/transact conn [[:db.fn/retractEntity (:db/id entity)]]))
-      uuid
-      (catch java.util.concurrent.ExecutionException e
-        (errorf e "Couldn't delete todo: %s" uuid)))))
+      uuid)
+    (catch java.util.concurrent.ExecutionException e
+      (errorf e "Couldn't delete todo: %s" uuid)
+      (throw e))))

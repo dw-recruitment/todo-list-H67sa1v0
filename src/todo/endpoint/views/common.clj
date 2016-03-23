@@ -23,4 +23,9 @@
        (for [list lists]
          [:li
           [:a {:href (utils/todo-list-path list)}
-           (todo-lists/title list)]])]]]]])
+           (todo-lists/title list)]])
+       [:li {:role "separator"
+             :class "divider"}]
+       [:li
+        [:a {:href (utils/new-list-path)}
+         "New Todo List"]]]]]]])

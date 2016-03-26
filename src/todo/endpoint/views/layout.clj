@@ -15,8 +15,6 @@
              :content "width=device-width, initial-scale=1"}]
      [:meta {:name "description"
              :content "A zoomy web app for doing the tracking of doing todos."}]
-     [:meta {:name "author"
-             :content "Anonymous Candidate"}]
      [:title "TODO DO DO"]
      [:link {:rel "stylesheet" :href "/css/bootstrap.min.css"}]]
     [:body
